@@ -141,7 +141,15 @@ export default {
 
           // trazendo opção mais rapida
           const moreLead_time = newArr.reduce(function(prev, current) { 
-            return prev.lead_time < current.lead_time ? prev : current; 
+            if(prev.lead_time < current.lead_time ){
+              return prev
+            }
+            else if(prev.lead_time == current.lead_time  && prev.cost_transport_heavy < current.cost_transport_heavy ){
+              return prev
+            }
+            else{
+              return current
+            }
           });
           this.maisRapido=moreLead_time.name+"-R$"+moreLead_time.cost_transport_heavy+"-"+moreLead_time.lead_time+"h"
 
@@ -158,8 +166,16 @@ export default {
           console.log(maxLigt)
 
           // trazendo opção mais rapida
-          const moreLead_time = newArr.reduce(function(prev, current) { 
-            return prev.lead_time < current.lead_time ? prev : current; 
+          const moreLead_time = newArr.reduce(function(prev, current) {
+            if(prev.lead_time < current.lead_time ){
+              return prev
+            }
+            else if(prev.lead_time == current.lead_time  && prev.cost_transport_light < current.cost_transport_light ){
+              return prev
+            }
+            else{
+              return current
+            }
           });
           console.log(newArr)
           console.log(moreLead_time)
