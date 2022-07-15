@@ -121,11 +121,12 @@ export default {
           let valueCTL=obj.cost_transport_light.split(" ")
           let valueCTV=obj.cost_transport_heavy.split(" ")
           let ld=obj.lead_time.split("h")
-          return {...obj, cost_transport_light: (valueCTL[1]*this.valueKg).toFixed(1), cost_transport_heavy: (valueCTV[1]* this.valueKg).toFixed(1), lead_time:ld[0] };
+          return {...obj, cost_transport_light: (parseInt(valueCTL[1])*this.valueKg).toFixed(1), cost_transport_heavy: (parseInt(valueCTV[1])* this.valueKg).toFixed(1), lead_time:parseInt(ld[0]) };
         }
 
         return obj;
       });
+      console.log(newArr)
 
       
         
@@ -136,11 +137,11 @@ export default {
             return prev.cost_transport_heavy < current.cost_transport_heavy ? prev : current; 
           });
           this.maisBarato=maxHeavy.name+"-R$"+maxHeavy.cost_transport_heavy+"-"+maxHeavy.lead_time+"h"
-          // console.log(maxHeavy)
+          console.log(maxHeavy)
 
           // trazendo opção mais rapida
           const moreLead_time = newArr.reduce(function(prev, current) { 
-            return prev.lead_time > current.lead_time ? prev : current; 
+            return prev.lead_time < current.lead_time ? prev : current; 
           });
           this.maisRapido=moreLead_time.name+"-R$"+moreLead_time.cost_transport_heavy+"-"+moreLead_time.lead_time+"h"
 
@@ -154,13 +155,11 @@ export default {
             return prev.cost_transport_light < current.cost_transport_light ? prev : current; 
           });
           this.maisBarato=maxLigt.name+"-R$"+maxLigt.cost_transport_light+"-"+maxLigt.lead_time+"h"
-          // console.log(maxLigt)
+          console.log(maxLigt)
 
           // trazendo opção mais rapida
           const moreLead_time = newArr.reduce(function(prev, current) { 
-            console.log(prev.lead_time)
-            console.log(current.lead_time)
-            return prev.lead_time > current.lead_time ? prev : current; 
+            return prev.lead_time < current.lead_time ? prev : current; 
           });
           console.log(newArr)
           console.log(moreLead_time)
