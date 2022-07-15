@@ -3,6 +3,7 @@
     <div class="title">
       <b-navbar toggleable="lg" type="dark" variant="info">
         <b-navbar-brand class="ml-2">
+        <img src="../assets/logo.png" width="40px" height="40px" style="margin-right: 5px; color: #fff;" >
           <b>{{ appName }}</b>
         </b-navbar-brand>
       </b-navbar>
