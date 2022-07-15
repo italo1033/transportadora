@@ -175,6 +175,9 @@ export default {
       if(this.selected === "" || this.valueKg === ""){
         alert("Por favor preencha todos os campos para podemos fazer a análise.")
       }
+      else if(isNaN(this.valueKg) != false){
+        alert("Por favor insira um numero. Ex.: 123")
+      }
       else{
         this.verification();
       }
