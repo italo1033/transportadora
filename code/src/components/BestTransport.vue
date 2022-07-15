@@ -7,24 +7,43 @@
         </b-navbar-brand>
       </b-navbar>
     </div>
-    <div style="border-bottom:1px solid #000; width:max-content; padding:20px;">
-      Como é o frete que você precisa?
+    <div  class="containerGeral">
+      <div class="text">
+        <p>Como é o frete que você precisa?</p>
+      </div>
+        <div class="containerInput">
+          Destino:
+          <select v-model="selected">
+            <option value="" disabled selected>Selecione aqui o destino do frete.</option>
+            <option v-for="account in accounts" :key="account" :value="account" >{{ account }}</option>
+          </select>
+
+          Peso
+          <input type="text" v-model="valueKg" placeholder="Insira aqui o peso da carga em KG" />
+
+          <div class="d-flex w-100 justify-content-center">
+            <button  v-on:click="result">Analisar</button>
+          </div>
+        </div>
+
+        
+
+        <div v-if="show">
+          <div class="text">
+            <p>Estas são as melhores alternativas de frete que encontramos para você.</p>
+          </div>
+          <div class="result" style="background-color: #d9ead3;">
+              <p>
+                <img src="../assets/iconsMao.png" alt="icon_mao" width="40px" height="40px">
+                Frete mais Barato: <b> {{maisBarato}}</b></p>
+          </div>
+          <div class="result" style="background-color: #c9daf8;">
+                <p>
+                  <img src="../assets/watch.png" alt="icon_mao" width="40px" height="40px">
+                  Frete mais Rápido: <b>{{maisRapido}}</b></p>
+          </div>
+        </div>
     </div>
-    <div class="d-flex flex-column">
-      Destino:
-      <select v-model="selected">
-        <option value="" disabled selected>Escolha uma conta</option>
-        <option v-for="account in accounts" :key="account" :value="account" >{{ account }}</option>
-      </select>
-
-      Peso
-      <input type="text" v-model="valueKg" placeholder="Insira aqui o peso da carga em KG" />
-    </div>
-
-    <button  v-on:click="comverte">Analisar</button>
-
-    <p>Frete mais Barato: {{maisBarato.name}}-R${{maisBarato.cost_transport_heavy}}-{{maisBarato.lead_time}}h</p>
-
   </div>
 </template>
 
@@ -32,8 +51,7 @@
 import {
   BNavbar,
   BNavbarBrand,
-} from 'bootstrap-vue'
-
+} from 'bootstrap-vue';
 export default {
   components: {
     BNavbar,
@@ -44,12 +62,13 @@ export default {
 
     return {
       appName,
-      valueKg:" ",
+      valueKg:"",
       accounts: [],
       selected:'',
       objectURL:[],
-      maisBarato:[],
-      
+      maisBarato:"",
+      maisRapido:"",
+      show:false,
     }
   },
   created() {
@@ -82,7 +101,7 @@ export default {
   },
   methods: {
     // Implemente aqui os metodos utilizados na pagina
-    comverte(){
+    verification(){
       const array=[]
       for (const key in this.objectURL) {
         if (Object.hasOwnProperty.call(this.objectURL, key)) {
@@ -101,65 +120,65 @@ export default {
           let valueCTL=obj.cost_transport_light.split(" ")
           let valueCTV=obj.cost_transport_heavy.split(" ")
           let ld=obj.lead_time.split("h")
-          return {...obj, cost_transport_light: valueCTL[1]*this.valueKg, cost_transport_heavy: valueCTV[1]* this.valueKg, lead_time:ld[0] };
+          return {...obj, cost_transport_light: (valueCTL[1]*this.valueKg).toFixed(1), cost_transport_heavy: (valueCTV[1]* this.valueKg).toFixed(1), lead_time:ld[0] };
         }
 
         return obj;
       });
 
-    //trazendo o mais em conta 
       
-      if(this.valueKg >= 100){
-        const maxHeavy = newArr.reduce(function(prev, current) { 
-          return prev.cost_transport_heavy < current.cost_transport_heavy ? prev : current; 
-        });
-        this.maisBarato=maxHeavy
-      console.log(maxHeavy);
-      }else if(this.valueKg < 100){
-        const maxHeavy = newArr.reduce(function(prev, current) { 
-          return prev.cost_transport_heavy < current.cost_transport_heavy ? prev : current; 
-        });
-        this.maisBarato=maxHeavy
+        
+      if(this.valueKg > 100){
+        console.log('1')
+          // trazendo opção mais barata
+          const maxHeavy = newArr.reduce(function(prev, current) { 
+            return prev.cost_transport_heavy < current.cost_transport_heavy ? prev : current; 
+          });
+          this.maisBarato=maxHeavy.name+"-R$"+maxHeavy.cost_transport_heavy+"-"+maxHeavy.lead_time+"h"
+          // console.log(maxHeavy)
+
+          // trazendo opção mais rapida
+          const moreLead_time = newArr.reduce(function(prev, current) { 
+            return prev.lead_time > current.lead_time ? prev : current; 
+          });
+          this.maisRapido=moreLead_time.name+"-R$"+moreLead_time.cost_transport_heavy+"-"+moreLead_time.lead_time+"h"
+
+          console.log(moreLead_time)
+
+
+      }else if(this.valueKg <= 100){
+        console.log('2')
+          // trazendo valor mais barato
+          const maxLigt = newArr.reduce(function(prev, current) { 
+            return prev.cost_transport_light < current.cost_transport_light ? prev : current; 
+          });
+          this.maisBarato=maxLigt.name+"-R$"+maxLigt.cost_transport_light+"-"+maxLigt.lead_time+"h"
+          // console.log(maxLigt)
+
+          // trazendo opção mais rapida
+          const moreLead_time = newArr.reduce(function(prev, current) { 
+            console.log(prev.lead_time)
+            console.log(current.lead_time)
+            return prev.lead_time > current.lead_time ? prev : current; 
+          });
+          console.log(newArr)
+          console.log(moreLead_time)
+          this.maisRapido=moreLead_time.name+"-R$"+moreLead_time.cost_transport_light+"-"+moreLead_time.lead_time+"h"
+
       }
 
-
-
-      
+      this.show = true;
     },
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // fuctions
-    // dictVerification(select ,array){
-    //   Object.filter = (obj, predicate) => Object.assign(...Object.keys(obj)
-    //                 .filter( key => predicate(obj[key]) )
-    //                 .map( key => ({ [key]: obj[key] }) ) );
+    result(){
+      if(this.selected === "" || this.valueKg === ""){
+        alert("Por favor preencha todos os campos para podemos fazer a análise.")
+      }
+      else{
+        this.verification();
+      }
 
-
-    //   var filtered = Object.filter(array, score => score > select); 
-    //   for (const key in filtered) {
-    //     if (Object.hasOwnProperty.call(object, key)) {
-    //       const element = object[key];
-
-          
-    //     }
-    //   }
-
-    // }
+    }
   },
 }
 </script>
@@ -171,5 +190,57 @@ export default {
 
 .title .navbar-brand {
   margin-left: 20px;
+}
+.containerGeral{
+  display: flex;
+  flex-direction: column;
+  margin-left: 10%;
+}
+select, input{
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+.containerInput{
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+.text{
+  margin-top: 20px;
+  border-bottom:1px solid #000; 
+  width:450px;
+  margin-bottom: 30px;
+}
+
+p{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.result p{
+  font-weight: normal;
+  font-size: 17px;
+}
+
+.result{
+  width:450px;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 10px;
+  margin-left: 0;
+  padding-top: 20px;
+  align-items: center;
+  border-style: dashed;
+}
+button{
+  background-color: #00aca6;
+  border: 1px solid;
+  color: #000;
+  font-weight: bold;
+  width: 100px;
+  border-radius: 5px;
 }
 </style>
