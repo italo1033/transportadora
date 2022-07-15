@@ -121,7 +121,7 @@ export default {
           let valueCTL=obj.cost_transport_light.split(" ")
           let valueCTV=obj.cost_transport_heavy.split(" ")
           let ld=obj.lead_time.split("h")
-          return {...obj, cost_transport_light: (parseInt(valueCTL[1])*this.valueKg).toFixed(1), cost_transport_heavy: (parseInt(valueCTV[1])* this.valueKg).toFixed(1), lead_time:parseInt(ld[0]) };
+          return {...obj, cost_transport_light: (parseFloat(valueCTL[1])*this.valueKg).toFixed(1), cost_transport_heavy: (parseFloat(valueCTV[1])* this.valueKg).toFixed(1), lead_time:parseInt(ld[0]) };
         }
 
         return obj;
